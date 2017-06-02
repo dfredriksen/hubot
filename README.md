@@ -212,3 +212,43 @@ Add the subdomain hubot should connect to. If you web URL looks like
 
 You may want to get comfortable with `heroku logs` and `heroku restart` if
 you're having issues.
+
+Hubot systemd service unit file
+Place in e.g. `/etc/systemd/system/hubot.service`, then `systemctl daemon-reload` and `service hubot start`. Add your own values to the environment values
+
+    [Unit]
+    Description=Jarvis
+    Requires=network.target
+    After=network.target
+
+    [Service]
+    Type=simple
+    WorkingDirectory=/var/www/hubot
+    User=dfredriksen
+
+    Restart=always
+    RestartSec=10
+
+    ; Configure Hubot environment variables, use quotes around vars with whitespace as shown below.
+    Environment="HUBOT_DIR='/var/www/hubot/'"
+    Environment="HUBOT='bin/hubot'"
+    Environment="ADAPTER='slack'"
+    # Name (and local user) to run Hubot as
+    Environment="HUBOT_USER='jarvis'"
+    # httpd listen port
+    Environment="PORT='5555'"
+
+    Environment="HUBOT_BROWSER_STACK_USERNAME=xxxx
+    Environment="HUBOT_BROWSER_STACK_ACCESS_KEY=xxx"
+    Environment="HUBOT_TEAM_ADMIN=xxxx"
+    Environment="HUBOT_SLACK_TOKEN=xxxx"
+
+
+
+    ; Alternatively multiple environment variables can loaded from an external file
+    ;EnvironmentFile=/etc/hubot-environment
+
+    ExecStart=/var/www/hubot/bin/hubot --adapter slack
+
+    [Install]
+    WantedBy=multi-user.target
